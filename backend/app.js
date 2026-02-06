@@ -1,8 +1,8 @@
-const express = require("express");
-const cors = require("cors");
-const authRoutes = require("./routes/authRoutes");
-const postRoutes = require("./routes/postRoutes");
-const { notFound, errorHandler } = require("./middlewares/errorHandler");
+import express from "express";
+import cors from "cors";
+import authRoutes from "./routes/authRoutes.js";
+import postRoutes from "./routes/postRoutes.js";
+import { notFound, errorHandler } from "./middlewares/errorHandler.js";
 
 const app = express();
 
@@ -19,4 +19,4 @@ app.use("/api/posts", postRoutes);
 app.use(notFound);
 app.use(errorHandler);
 
-module.exports = app;
+export default app;

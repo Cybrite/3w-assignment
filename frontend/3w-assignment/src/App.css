@@ -173,9 +173,93 @@
   background: rgba(255, 122, 0, 0.12);
 }
 
+.ghost-small {
+  border: none;
+  background: rgba(255, 122, 0, 0.12);
+  color: var(--accent);
+  cursor: pointer;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+}
+
 .link {
   align-self: flex-start;
   margin-top: 10px;
+  font-size: 0.9rem;
+}
+
+.image-upload-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.file-input-wrapper {
+  cursor: pointer;
+}
+
+.file-input-button {
+  display: inline-block;
+  border: 2px dashed rgba(15, 23, 42, 0.2);
+  border-radius: 14px;
+  padding: 24px;
+  text-align: center;
+  background: rgba(255, 122, 0, 0.05);
+  color: var(--accent);
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.file-input-button:hover {
+  border-color: var(--accent);
+  background: rgba(255, 122, 0, 0.1);
+}
+
+.image-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.image-preview img {
+  width: 100%;
+  height: auto;
+  max-height: 300px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.preview-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.preview-actions button {
+  flex: 1;
+}
+
+.uploaded-image-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  background: rgba(102, 187, 106, 0.1);
+  border: 1px solid rgba(102, 187, 106, 0.3);
+  border-radius: 10px;
+}
+
+.success-message {
+  margin: 0;
+  color: #2e7d32;
+  font-weight: 600;
   font-size: 0.9rem;
 }
 

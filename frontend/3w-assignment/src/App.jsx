@@ -22,6 +22,9 @@ function App() {
   const [posts, setPosts] = useState([]);
   const [commentDrafts, setCommentDrafts] = useState({});
   const [status, setStatus] = useState({ loading: false, error: "" });
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
 
   const canSubmitPost = useMemo(() => {
     return postForm.text.trim() || postForm.imageUrl.trim();
@@ -94,6 +97,95 @@ function App() {
     } finally {
       setStatus((prev) => ({ ...prev, loading: false }));
     }
+  };
+
+  const handleImageSelect = (event) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith("image/")) {
+        setStatus((prev) => ({
+          ...prev,
+          error: "Please select a valid image file.",
+        }));
+        return;
+      }
+
+      // Validate file size (5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        setStatus((prev) => ({
+          ...prev,
+          error: "Image size must be less than 5MB.",
+        }));
+        return;
+      }
+
+      setImageFile(file);
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImagePreview(e.target?.result);
+      };
+      reader.readAsDataURL(file);
+      setStatus((prev) => ({ ...prev, error: "" }));
+    }
+  };
+
+  const handleUploadImage = async () => {
+    if (!imageFile) {
+      setStatus((prev) => ({ ...prev, error: "No image selected." }));
+      return;
+    }
+
+    setIsUploadingImage(true);
+    setStatus((prev) => ({ ...prev, error: "" }));
+
+    const formData = new FormData();
+    formData.append("image", imageFile);
+
+    try {
+      const response = await fetch(`${API_BASE}/api/upload/image`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to upload image.");
+      }
+
+      // Set the uploaded image URL
+      setPostForm((prev) => ({
+        ...prev,
+        imageUrl: data.imageUrl,
+      }));
+
+      // Clear file input and preview
+      setImageFile(null);
+      setImagePreview(null);
+
+      setStatus((prev) => ({
+        ...prev,
+        loading: false,
+      }));
+    } catch (error) {
+      setStatus((prev) => ({
+        ...prev,
+        error: error.message,
+      }));
+    } finally {
+      setIsUploadingImage(false);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setImageFile(null);
+    setImagePreview(null);
+    setPostForm((prev) => ({
+      ...prev,
+      imageUrl: "",
+    }));
   };
 
   const handleCreatePost = async (event) => {
@@ -308,26 +400,67 @@ function App() {
                   placeholder="What are you working on today?"
                 />
               </label>
-              <label className="field">
-                <span>Image URL</span>
-                <input
-                  type="url"
-                  value={postForm.imageUrl}
-                  onChange={(event) =>
-                    setPostForm((prev) => ({
-                      ...prev,
-                      imageUrl: event.target.value,
-                    }))
-                  }
-                  placeholder="https://..."
-                />
-              </label>
+
+              <div className="field">
+                <span>Add Image</span>
+                <div className="image-upload-section">
+                  {imagePreview ? (
+                    <div className="image-preview">
+                      <img src={imagePreview} alt="Preview" />
+                      <div className="preview-actions">
+                        <button
+                          type="button"
+                          className="primary"
+                          onClick={handleUploadImage}
+                          disabled={isUploadingImage}
+                        >
+                          {isUploadingImage ? "Uploading..." : "Upload Image"}
+                        </button>
+                        <button
+                          type="button"
+                          className="ghost"
+                          onClick={handleRemoveImage}
+                          disabled={isUploadingImage}
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <label className="file-input-wrapper">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageSelect}
+                        style={{ display: "none" }}
+                      />
+                      <span className="file-input-button">
+                        {postForm.imageUrl ? "Change Image" : "Select Image"}
+                      </span>
+                    </label>
+                  )}
+
+                  {postForm.imageUrl && !imagePreview && (
+                    <div className="uploaded-image-info">
+                      <p className="success-message">✓ Image uploaded</p>
+                      <button
+                        type="button"
+                        className="ghost-small"
+                        onClick={handleRemoveImage}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+
               <button
                 className="primary"
                 type="submit"
-                disabled={!canSubmitPost}
+                disabled={!canSubmitPost || isUploadingImage}
               >
-                Post to feed
+                {isUploadingImage ? "Uploading..." : "Post to feed"}
               </button>
             </form>
           </div>

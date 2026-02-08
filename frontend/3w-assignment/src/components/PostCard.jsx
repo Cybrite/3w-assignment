@@ -46,10 +46,12 @@ export const PostCard = ({
           className={userLiked ? "like active" : "like"}
           onClick={() => onLike(post._id)}
         >
-          {userLiked ? "Liked" : "Like"}
+          {userLiked ? "❤️ Liked" : "🤍 Like"}
           <span>{post.likes?.length || 0}</span>
         </button>
-        <span className="meta-chip">Comments {post.comments?.length || 0}</span>
+        <span className="meta-chip">
+          💬 {post.comments?.length || 0} Comments
+        </span>
       </div>
       <CommentSection
         comments={post.comments}

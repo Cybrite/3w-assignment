@@ -1,20 +1,34 @@
-@import url("https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=Source+Sans+3:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap");
 
 :root {
-  font-family: "Source Sans 3", sans-serif;
-  line-height: 1.5;
+  font-family:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  line-height: 1.6;
   font-weight: 400;
-  color: #0f172a;
-  background-color: #f7f6f1;
+  color: #0d47a1;
+  background-color: #e3f2fd;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  --accent: #ff7a00;
-  --ink-dark: #0f172a;
-  --ink-light: #5b6474;
-  --surface: rgba(255, 255, 255, 0.9);
-  --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.12);
+
+  /* Color Theme */
+  --primary-blue: #1e88e5;
+  --light-blue-bg: #e3f2fd;
+  --card-bg: #ffffff;
+  --border-blue: #bbdefb;
+  --accent-pink: #ec407a;
+  --accent-yellow: #ffd54f;
+  --text-dark: #0d47a1;
+  --text-grey: #607d8b;
+
+  --shadow-sm: 0 2px 8px rgba(30, 136, 229, 0.08);
+  --shadow-md: 0 4px 16px rgba(30, 136, 229, 0.12);
+  --shadow-lg: 0 8px 24px rgba(30, 136, 229, 0.16);
 }
 
 * {
@@ -24,18 +38,7 @@
 body {
   margin: 0;
   min-height: 100vh;
-  background:
-    radial-gradient(
-      circle at top right,
-      rgba(255, 122, 0, 0.15),
-      transparent 60%
-    ),
-    radial-gradient(
-      circle at 20% 20%,
-      rgba(255, 77, 109, 0.12),
-      transparent 55%
-    ),
-    #f7f6f1;
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
 }
 
 #root {

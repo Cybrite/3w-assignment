@@ -1,5 +1,12 @@
 import { useState, useCallback } from "react";
-import { getPosts, createPost, likePost, commentOnPost } from "../utils/api";
+import {
+  getPosts,
+  createPost,
+  likePost,
+  commentOnPost,
+  deletePost,
+  deleteComment,
+} from "../utils/api";
 
 export const usePosts = () => {
   const [posts, setPosts] = useState([]);
@@ -53,6 +60,26 @@ export const usePosts = () => {
     }
   }, []);
 
+  const deletePostAction = useCallback(async (postId, userId) => {
+    try {
+      await deletePost(postId, userId);
+      setPosts((prev) => prev.filter((post) => post._id !== postId));
+    } catch (err) {
+      throw err;
+    }
+  }, []);
+
+  const deleteCommentAction = useCallback(async (postId, commentId, userId) => {
+    try {
+      const data = await deleteComment(postId, commentId, userId);
+      setPosts((prev) =>
+        prev.map((post) => (post._id === postId ? data.post : post)),
+      );
+    } catch (err) {
+      throw err;
+    }
+  }, []);
+
   return {
     posts,
     setPosts,
@@ -62,5 +89,7 @@ export const usePosts = () => {
     addPost,
     likePostAction,
     addComment,
+    deletePostAction,
+    deleteCommentAction,
   };
 };

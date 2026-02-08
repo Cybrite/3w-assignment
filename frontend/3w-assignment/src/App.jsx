@@ -17,7 +17,15 @@ import { EMPTY_AUTH, EMPTY_POST, AUTH_MODES } from "./constants";
 
 function App() {
   const { user, persistUser, status, setStatus } = useAuth();
-  const { posts, fetchPosts, addPost, likePostAction, addComment } = usePosts();
+  const {
+    posts,
+    fetchPosts,
+    addPost,
+    likePostAction,
+    addComment,
+    deletePostAction,
+    deleteCommentAction,
+  } = usePosts();
   const {
     imageFile,
     imagePreview,
@@ -137,6 +145,48 @@ function App() {
     }
   };
 
+  const handleDeletePost = async (postId) => {
+    if (!user) {
+      setStatus((prev) => ({ ...prev, error: "Login required." }));
+      return;
+    }
+
+    if (!window.confirm("Are you sure you want to delete this post?")) {
+      return;
+    }
+
+    try {
+      await deletePostAction(postId, user.id);
+      setStatus((prev) => ({
+        ...prev,
+        error: "",
+      }));
+    } catch (error) {
+      setStatus((prev) => ({ ...prev, error: error.message }));
+    }
+  };
+
+  const handleDeleteComment = async (postId, commentId) => {
+    if (!user) {
+      setStatus((prev) => ({ ...prev, error: "Login required." }));
+      return;
+    }
+
+    if (!window.confirm("Are you sure you want to delete this comment?")) {
+      return;
+    }
+
+    try {
+      await deleteCommentAction(postId, commentId, user.id);
+      setStatus((prev) => ({
+        ...prev,
+        error: "",
+      }));
+    } catch (error) {
+      setStatus((prev) => ({ ...prev, error: error.message }));
+    }
+  };
+
   return (
     <div className="app">
       <Topbar user={user} onLogout={() => persistUser(null)} />
@@ -185,6 +235,8 @@ function App() {
             setCommentDrafts((prev) => ({ ...prev, [postId]: text }))
           }
           onCommentSubmit={handleCommentSubmit}
+          onPostDelete={handleDeletePost}
+          onCommentDelete={handleDeleteComment}
         />
       </main>
     </div>

@@ -58,3 +58,17 @@ export const uploadImage = (file) => {
     body: formData,
   });
 };
+
+export const deletePost = (postId, userId) =>
+  apiCall(`/api/posts/${postId}`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ userId }),
+  });
+
+export const deleteComment = (postId, commentId, userId) =>
+  apiCall(`/api/posts/${postId}/comment/${commentId}`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ userId }),
+  });

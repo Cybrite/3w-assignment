@@ -95,4 +95,61 @@ const addComment = async (req, res) => {
   }
 };
 
-export { getPosts, createPost, toggleLike, addComment };
+const deletePost = async (req, res) => {
+  try {
+    const { userId } = req.body;
+    if (!userId) {
+      return res.status(401).json({ message: "Login required." });
+    }
+    const post = await Post.findById(req.params.id);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found." });
+    }
+    if (post.authorId.toString() !== userId) {
+      return res
+        .status(403)
+        .json({ message: "You can only delete your own posts." });
+    }
+    await Post.findByIdAndDelete(req.params.id);
+    return res.json({ message: "Post deleted successfully." });
+  } catch (error) {
+    return res.status(500).json({ message: "Unable to delete post." });
+  }
+};
+
+const deleteComment = async (req, res) => {
+  try {
+    const { userId } = req.body;
+    const { id: postId, commentId } = req.params;
+    if (!userId) {
+      return res.status(401).json({ message: "Login required." });
+    }
+    const post = await Post.findById(postId);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found." });
+    }
+    const comment = post.comments.id(commentId);
+    if (!comment) {
+      return res.status(404).json({ message: "Comment not found." });
+    }
+    if (comment.userId.toString() !== userId) {
+      return res
+        .status(403)
+        .json({ message: "You can only delete your own comments." });
+    }
+    post.comments.id(commentId).deleteOne();
+    await post.save();
+    return res.json({ post });
+  } catch (error) {
+    return res.status(500).json({ message: "Unable to delete comment." });
+  }
+};
+
+export {
+  getPosts,
+  createPost,
+  toggleLike,
+  addComment,
+  deletePost,
+  deleteComment,
+};

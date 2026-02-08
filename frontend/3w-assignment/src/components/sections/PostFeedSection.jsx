@@ -9,6 +9,8 @@ export const PostFeedSection = ({
   onLike,
   onCommentChange,
   onCommentSubmit,
+  onPostDelete,
+  onCommentDelete,
 }) => {
   return (
     <section className="column feed">
@@ -35,11 +37,16 @@ export const PostFeedSection = ({
             <PostCard
               key={post._id}
               post={post}
+              user={user}
               userLiked={userLiked}
               commentDraft={commentDrafts[post._id] || ""}
               onLike={onLike}
               onCommentChange={(text) => onCommentChange(post._id, text)}
               onCommentSubmit={() => onCommentSubmit(post._id)}
+              onPostDelete={onPostDelete}
+              onCommentDelete={(commentId) =>
+                onCommentDelete(post._id, commentId)
+              }
             />
           );
         })

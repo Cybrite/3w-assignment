@@ -2,11 +2,14 @@ import { CommentSection } from "./CommentSection";
 
 export const PostCard = ({
   post,
+  user,
   userLiked,
   commentDraft,
   onLike,
   onCommentChange,
   onCommentSubmit,
+  onPostDelete,
+  onCommentDelete,
 }) => {
   return (
     <article className="card post" key={post._id}>
@@ -17,7 +20,19 @@ export const PostCard = ({
             {new Date(post.createdAt).toLocaleString()}
           </p>
         </div>
-        <span className="badge">Public</span>
+        <div className="post-header-actions">
+          <span className="badge">Public</span>
+          {user && post.authorId === user.id && (
+            <button
+              type="button"
+              className="delete-post-btn"
+              onClick={() => onPostDelete(post._id)}
+              title="Delete post"
+            >
+              ×
+            </button>
+          )}
+        </div>
       </header>
       {post.text && <p className="post-text">{post.text}</p>}
       {post.imageUrl && (
@@ -39,8 +54,10 @@ export const PostCard = ({
       <CommentSection
         comments={post.comments}
         commentDraft={commentDraft}
+        user={user}
         onCommentChange={onCommentChange}
         onCommentSubmit={onCommentSubmit}
+        onCommentDelete={onCommentDelete}
       />
     </article>
   );

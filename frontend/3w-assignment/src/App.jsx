@@ -41,6 +41,7 @@ function App() {
   const [authForm, setAuthForm] = useState(EMPTY_AUTH);
   const [postForm, setPostForm] = useState(EMPTY_POST);
   const [commentDrafts, setCommentDrafts] = useState({});
+  const [showMobileAuth, setShowMobileAuth] = useState(false);
 
   // Combine all errors into single status
   const allErrors = status.error || imageError;
@@ -191,22 +192,72 @@ function App() {
     <div className="app">
       <Topbar user={user} onLogout={() => persistUser(null)} />
 
+      {/* Mobile Auth Button - Only show when not logged in */}
+      {!user && (
+        <button
+          className="mobile-auth-btn"
+          onClick={() => setShowMobileAuth(true)}
+        >
+          🔐 Login / Signup
+        </button>
+      )}
+
+      {/* Mobile Auth Overlay */}
+      {showMobileAuth && (
+        <div
+          className="mobile-auth-overlay"
+          onClick={() => setShowMobileAuth(false)}
+        >
+          <div
+            className="mobile-auth-content"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className="mobile-auth-close"
+              onClick={() => setShowMobileAuth(false)}
+            >
+              ×
+            </button>
+            <AuthSection
+              authMode={authMode}
+              authForm={authForm}
+              status={status}
+              onAuthModeChange={() =>
+                setAuthMode((prev) =>
+                  prev === AUTH_MODES.LOGIN
+                    ? AUTH_MODES.SIGNUP
+                    : AUTH_MODES.LOGIN,
+                )
+              }
+              onFormChange={setAuthForm}
+              onAuthSubmit={(e) => {
+                handleAuthSubmit(e);
+                // Close modal on successful login
+                setTimeout(() => setShowMobileAuth(false), 500);
+              }}
+            />
+          </div>
+        </div>
+      )}
+
       <main className="shell">
         <section className="column">
-          <AuthSection
-            authMode={authMode}
-            authForm={authForm}
-            status={status}
-            onAuthModeChange={() =>
-              setAuthMode((prev) =>
-                prev === AUTH_MODES.LOGIN
-                  ? AUTH_MODES.SIGNUP
-                  : AUTH_MODES.LOGIN,
-              )
-            }
-            onFormChange={setAuthForm}
-            onAuthSubmit={handleAuthSubmit}
-          />
+          <div className="desktop-auth">
+            <AuthSection
+              authMode={authMode}
+              authForm={authForm}
+              status={status}
+              onAuthModeChange={() =>
+                setAuthMode((prev) =>
+                  prev === AUTH_MODES.LOGIN
+                    ? AUTH_MODES.SIGNUP
+                    : AUTH_MODES.LOGIN,
+                )
+              }
+              onFormChange={setAuthForm}
+              onAuthSubmit={handleAuthSubmit}
+            />
+          </div>
 
           <PostComposerSection
             postForm={postForm}
